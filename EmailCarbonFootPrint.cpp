@@ -25,27 +25,3 @@ public:
         cout << "Total: " << Total_CarbonFootprint << " g CO2e" << endl;
     }
 };
-
-// Function to input email data
-void InputEmailData(int& spam_Emails, int& standard_Emails, int& attachment_Emails) {
-    cout << "Enter the number of spam emails received: ";
-    cin >> spam_Emails;
-
-    cout << "Enter the number of standard emails received: ";
-    cin >> standard_Emails;
-
-    cout << "Enter the number of emails with attachments received: ";
-    cin >> attachment_Emails;
-}
-
-int main() {
-    cout << "Email Carbon Footprint Calculator" << endl;
-        string email_Id;
-        cout << "Enter the Email Id : ";
-        cin>>email_Id;
-        int spam_Emails, standard_Emails, attachment_Emails;
-        InputEmailData(spam_Emails, standard_Emails, attachment_Emails);
-        EmailCarbonFootprint emailFootprint(spam_Emails, standard_Emails, attachment_Emails);
-        emailFootprint.DisplayDayTotal();
-    return 0;
-}
