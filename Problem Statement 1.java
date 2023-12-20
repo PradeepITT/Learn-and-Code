@@ -1,7 +1,7 @@
 public class MathOperation {
-    int integerValue;
+    int firstNumber;
     double doubleValue;
-    String stringValue;
+    String text;
 
     public void printCalculatedSum(int number1, int number2) {
         int sum = number1 + number2;
@@ -18,11 +18,11 @@ public class MainProgram {
     public static void main(String[] args) {
         MathOperation mathOperation = new MathOperation();
 
-        mathOperation.integerValue = 10;
+        mathOperation.firstNumber = 10;
         mathOperation.doubleValue = 20.5;
-        mathOperation.stringValue = "hello";
+        mathOperation.text = "hello";
         
-        mathOperation.printCalculatedSum(mathOperation.integerValue, 5);
+        mathOperation.printCalculatedSum(mathOperation.firstNumber, 5);
 
         mathOperation.printStringIntoUppercase("world");
     }
