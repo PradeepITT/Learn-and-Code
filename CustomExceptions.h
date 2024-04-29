@@ -1,31 +1,31 @@
 #ifndef CUSTOM_EXCEPTIONS_H
 #define CUSTOM_EXCEPTIONS_H
-
+using namespace std;
 #include <exception>
 #include <string>
 
-class InvalidInputException : public std::exception {
+class InvalidInputException : public exception {
 public:
     const char* what() const noexcept override {
         return "Invalid input data";
     }
 };
 
-class ProductNotFoundException : public std::exception {
+class ProductNotFoundException : public exception {
 public:
     const char* what() const noexcept override {
         return "Product not found";
     }
 };
 
-class InsufficientQuantityException : public std::exception {
+class InsufficientQuantityException : public exception {
 public:
     const char* what() const noexcept override {
         return "Insufficient quantity";
     }
 };
 
-class DuplicateProductException : public std::exception {
+class DuplicateProductException : public exception {
 public:
     const char* what() const noexcept override {
         return "Duplicate product";
