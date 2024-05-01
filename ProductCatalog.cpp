@@ -6,20 +6,20 @@
 using namespace std;
 
 void ProductCatalog::addProduct(const Product& product) {
-    for (const Product& p : products) {
-        if (p.getId() == product.getId()) {
+    for (const Product& existingProduct : products) {
+        if (existingProduct.getId() == product.getId()) {
             throw DuplicateProductException();
         }
     }
     products.push_back(product);
 }
 
-void ProductCatalog::updateProduct(int id, float price, int quantity) {
+void ProductCatalog::updateProduct(int productId, float newPrice, int newQuantity) {
     bool found = false;
-    for (Product& p : products) {
-        if (p.getId() == id) {
-            p.setPrice(price);
-            p.setQuantity(quantity);
+    for (Product& product : products) {
+        if (product.getId() == productId) {
+            product.setPrice(newPrice);
+            product.setQuantity(newQuantity);
             found = true;
             break;
         }
@@ -29,26 +29,27 @@ void ProductCatalog::updateProduct(int id, float price, int quantity) {
     }
 }
 
-void ProductCatalog::deleteProduct(int id) {
-    auto it = remove_if(products.begin(), products.end(), [id](const Product& p) { return p.getId() == id; });
-    if (it == products.end()) {
+void ProductCatalog::deleteProduct(int productId) {
+    auto productToDelete = remove_if(products.begin(), products.end(), [productId](const Product& product) { return product.getId() == productId; });
+    if (productToDelete == products.end()) {
         throw invalid_argument("Product not found");
     }
-    products.erase(it, products.end());
+    products.erase(productToDelete, products.end());
 }
-void ProductCatalog::sellProduct(int id, int quantity) {
+
+void ProductCatalog::sellProduct(int productId, int quantity) {
     // Find product by ID
-    auto it = std::find_if(products.begin(), products.end(),
-                           [id](const Product& p) { return p.getId() == id; });
-    if (it == products.end()) {
+    auto productIt = std::find_if(products.begin(), products.end(),
+                           [productId](const Product& product) { return product.getId() == productId; });
+    if (productIt == products.end()) {
         throw ProductNotFoundException();
     }
 
-    if (it->getQuantity() < quantity) {
+    if (productIt->getQuantity() < quantity) {
         throw InsufficientQuantityException();
     }
 
-    it->setQuantity(it->getQuantity() - quantity);
+    productIt->setQuantity(productIt->getQuantity() - quantity);
 }
 
 const vector<Product>& ProductCatalog::getProducts() const {
