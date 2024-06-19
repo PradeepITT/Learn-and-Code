@@ -1,21 +1,28 @@
 # roles/admin.py
 from roles.role import Role
-from functionalities.view_menu import ViewMenu
-from functionalities.add_user import AddUser
-from functionalities.delete_user import DeleteUser
-from functionalities.add_menu_item import AddMenuItem
-from functionalities.update_menu_item import UpdateMenuItem
-from functionalities.delete_menu_item import DeleteMenuItem
-
+from menu_function import MenuFunction
 
 class Admin(Role):
     def __init__(self, name, db_handler):
         super().__init__(name)
+        self.menu_function = MenuFunction(db_handler)
         self.functionalities = {
-            1: ViewMenu(db_handler),
-            2: AddUser(),
-            3: DeleteUser(),
-            4: AddMenuItem(),
-            5: UpdateMenuItem(),
-            6: DeleteMenuItem(),
+            1: ("View Menu", self.menu_function.view_menu),
+            2: ("Add Menu Item", self.menu_function.add_menu_item),
+            # Add more functionalities as needed
+        }
+
+
+
+# roles/employee.py
+from roles.role import Role
+from menu_function import MenuFunction
+
+class Employee(Role):
+    def __init__(self, name, db_handler):
+        super().__init__(name)
+        self.menu_function = MenuFunction(db_handler)
+        self.functionalities = {
+            1: ("View Menu", self.menu_function.view_menu),
+            # Add more functionalities as needed
         }

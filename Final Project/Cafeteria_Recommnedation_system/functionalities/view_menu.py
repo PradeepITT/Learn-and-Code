@@ -1,7 +1,7 @@
-from functionalities.functionality import Functionality
+# functionalities/view_menu.py
 from database_handler import DatabaseHandler
 
-class ViewMenu(Functionality):
+class ViewMenu:
     def __init__(self, db_handler: DatabaseHandler):
         self.db_handler = db_handler
 

@@ -1,3 +1,4 @@
+# database_handler.py
 import mysql.connector
 
 class DatabaseHandler:

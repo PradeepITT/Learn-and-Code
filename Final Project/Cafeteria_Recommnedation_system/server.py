@@ -1,3 +1,4 @@
+# server.py
 import sys
 import os
 sys.path.append(os.path.dirname(os.path.abspath(__file__)))
@@ -5,7 +6,7 @@ sys.path.append(os.path.dirname(os.path.abspath(__file__)))
 import socket
 import threading
 import json
-from roles.role import Role 
+from roles.role import Role
 from roles.admin import Admin
 from roles.chef import Chef
 from roles.employee import Employee
@@ -54,7 +55,7 @@ def handle_client(client_socket):
             response = {
                 'status': 'success',
                 'role': role_name,
-                'functions': {key: func.__class__.__name__ for key, func in functionalities.items()}
+                'functions': {key: name for key, (name, func) in functionalities.items()}
             }
 
             client_socket.send(json.dumps(response).encode())
@@ -65,7 +66,8 @@ def handle_client(client_socket):
                 if choice.isdigit():
                     choice = int(choice)
                     if choice in functionalities:
-                        result = functionalities[choice].execute()
+                        func_name, func = functionalities[choice]
+                        result = func()
                         client_socket.send(result.encode())         
                     else:
                         client_socket.send(json.dumps({"status": "failure", "message": "Invalid choice. Try again."}).encode())
