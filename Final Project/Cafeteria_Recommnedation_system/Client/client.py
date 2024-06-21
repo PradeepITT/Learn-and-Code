@@ -3,34 +3,45 @@ import json
 from userHandler.chef import Chef
 from userHandler.admin import Admin
 from userHandler.employee import Employee
+from utility.server_communicator import ServerCommunicator
+
 
 def login(username, password):
     client_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+    server_communicator = ServerCommunicator(client_socket)
 
-    request = {
-        "endpoint": "/login",
+    
+    endpoint =  "/login"
+    data = {
         "username": username,
         "password": password
     }
     
-    client_socket.connect(('localhost', 12345))
-    json_data = json.dumps(request).encode()
-    client_socket.sendall(json_data)
-    response = client_socket.recv(1024).decode()
-    data = json.loads(response)['user']
-    if(data['RoleName'] == "Admin"):
-        user = Admin(data['ID'], data['Name'], data['RoleName'], client_socket)
+    server_communicator.connect_to_server('localhost', 12345)
+    response = server_communicator.send_request(endpoint, data)
+
+    if(response['status'] != "success"):
+        print("Invalid creds!\nExiting...")
+        return
+    
+    response = response['user']
+    if(response['RoleName'] == "Admin"):
+        user = Admin(response['ID'], response['Name'], response['RoleName'], server_communicator)
         user.user_menu()
-    elif(data['RoleName'] == "Chef"):
-        user = Chef(data['ID'], data['Name'], data['RoleName'], client_socket)
+    elif(response['RoleName'] == "Chef"):
+        user = Chef(response['ID'], response['Name'], response['RoleName'], server_communicator)
         user.user_menu()
-    elif(data['RoleName'] == "Employee"):
-        user = Employee(data['ID'], data['Name'], data['RoleName'], client_socket)
-        user.user_menu()
-    else:
-        print("\nInvalid Creds")   
+    elif(response['RoleName'] == "Employee"):
+        user = Employee(response['ID'], response['Name'], response['RoleName'], server_communicator)
+        user.user_menu() 
+
+
+
 
 if __name__ == "__main__":
     username = input("Enter username: ")
     password = input("Enter password: ")
-    response = login(username, password)
+    login_response = login(username, password)
+    print(login_response)
+
+
