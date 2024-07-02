@@ -20,8 +20,7 @@ class Employee(User):
                 print("Food Recommendation for Tomorrow")
             # Implement logic for providing food recommendations for tomorrow
             elif choice == 4:
-                print("Give Feedback")
-            # Implement logic for allowing the employee to give feedback
+                self.food_menu.give_feedback()
             elif choice == 5:
                 self.food_menu.view_feedback()
             elif(choice == 6):

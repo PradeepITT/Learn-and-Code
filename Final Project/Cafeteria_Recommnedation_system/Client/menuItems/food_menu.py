@@ -21,11 +21,32 @@ class FoodMenu:
         data = {"role_name": self.role}
         print(endpoint, data)
         response = self.server_communicator.send_request(endpoint, data)
-        print(response)
         print(f"{'FoodName':<35} {'UserName':<25} {'Rating':<10} {'Comment':<70} {'Date':<20}")
         
         for item in response['feedback']:
             print(f"{item['FoodName']:<35} {item['UserName']:<25} {item['Rating']:<10} {item['Comment']:<70} {item['Date']:<20}")
+
+    def give_feedback(self):
+        user_id = input("Enter your User ID: ")
+        menu_item_id = input("Enter the Menu Item ID: ")
+        rating = input("Enter your Rating (e.g., 4.5): ")
+        comment = input("Enter your Comment: ")
+
+        endpoint = "/give-feedback"
+        data = {
+            "UserID": int(user_id),
+            "MenuItemID": int(menu_item_id),
+            "Rating": float(rating),
+            "Comment": comment,
+            "RoleName": "Employee"
+        }
+
+        response = self.server_communicator.send_request(endpoint, data)
+        if response["status"] == "success":
+            print(response["message"])
+        else:
+            print(response["message"])
+
     
     def roll_out_menu(self):
         endpoint = "/view-recomendation"
