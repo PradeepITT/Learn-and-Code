@@ -22,8 +22,8 @@ class Chef(User):
                 print("Generating monthly report...")
             # Implement logic for generating monthly report
             elif choice == 5:
-                print("Updating availability of menu item...")
-            # Implement logic for updating availability of menu item
+                print("hiii")
+                self.food_menu.update_availabilty()
             elif choice == 6:
                 self.food_menu.view_feedback()
             elif choice == 7:

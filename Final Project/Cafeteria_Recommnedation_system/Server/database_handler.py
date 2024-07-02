@@ -109,7 +109,6 @@ class DatabaseHandler:
         INSERT INTO menuitem (Name, Price, AvailabilityStatus, MealTypeID)
         VALUES (%s, %s, %s, %s)
         """
-        print(f"inside db {data}")
         values = (data["Name"], int(data["Price"]), data["AvailabilityStatus"], data["MealTypeID"])
         try:
             cursor.execute(query, values)
@@ -160,6 +159,25 @@ class DatabaseHandler:
         finally:
             cursor.close()
             
+    def update_menuItemavailabilty(self, menu_item_id, new_availability):
+        cursor = self.conn.cursor()
+        update_query = """
+        UPDATE menuitem
+        SET AvailabilityStatus = %s
+        WHERE ID = %s
+        """
+        try:
+            cursor.execute(update_query, (new_availability, menu_item_id))
+            self.conn.commit()
+            return "success"
+        except Exception as e:
+            print(f"An error occurred: {e}")
+            self.conn.rollback()
+            return "error"
+        finally:
+            cursor.close()
+        
+            
     def close(self):
         if self.conn:
             self.conn.close()
@@ -179,31 +197,4 @@ class DatabaseHandler:
         self.close()
         return avg_ratings
 
-    def add_feedback(self, user_id, menu_item_id, rating, comment, date):
-        self.connect()
-        cursor = self.conn.cursor()
-        query = """
-            INSERT INTO feedback (UserID, MenuItemID, Rating, Comment, Date)
-            VALUES (%s, %s, %s, %s, %s)
-        """
-        values = (user_id, menu_item_id, rating, comment, date)
-        try:
-            cursor.execute(query, values)
-            self.conn.commit()
-            cursor.close()
-            self.close()
-            return True
-        except Exception as e:
-            print(f"Error adding feedback: {e}")
-            self.conn.rollback()
-            cursor.close()
-            self.close()
-            return False
 
-    def calculate_sentiment_score(self, comment):
-        positive_words = ["delicious", "fantastic", "excellent", "superb", "enjoyed"]
-        negative_words = ["bad", "poor", "disappointing", "awful", "not good"]
-
-        positive_score = sum(comment.lower().count(word) for word in positive_words)
-        negative_score = sum(comment.lower().count(word) for word in negative_words)
-        return positive_score - negative_score

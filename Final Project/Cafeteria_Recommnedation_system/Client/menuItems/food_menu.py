@@ -133,3 +133,23 @@ class FoodMenu:
         else:
             print(response["message"])
 
+    def update_availabilty(self):
+        self.view_menu()
+        item_id = int(input("Please enter food ID to Update : "))
+        endpoint = "/update-availablity"
+        availability = input("Enter availability (Yes or No)")
+        if availability.upper() == "YES":
+            availability = 1
+        elif availability.upper() == "NO":
+            availability = 0
+        else: 
+            print("Invalid Input")
+            return 
+        data = {"RoleName": "Chef", "MenuItemID": item_id, "AvailabilityStatus": availability}
+
+        response = self.server_communicator.send_request(endpoint, data)
+        if response["status"] == "success":
+            print(response["message"])
+        else:
+            print(response["message"])    
+

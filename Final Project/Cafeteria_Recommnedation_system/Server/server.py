@@ -53,6 +53,8 @@ class Server:
                 self.view_feedback(client_socket, request)
             elif endpoint == "/give-feedback":
                 self.give_feedback(client_socket, request)    
+            elif endpoint == "/update-availablity":
+                self.update_availabilty(client_socket, request)     
             else:
                 response = {"status": "failure", "message": "Invalid endpoint"}
                 client_socket.sendall(json.dumps(response).encode())
@@ -97,6 +99,17 @@ class Server:
 
         client_socket.sendall(json.dumps(response).encode())
       
+    def update_availabilty(self, client_socket, request):
+        role_name = request.get("RoleName")
+        menuitemid = request.get("MenuItemID")
+        new_availability = request.get("AvailabilityStatus")
+        if role_name == "Chef":
+            response = self.db_handler.update_menuItemavailabilty(menuitemid, new_availability)
+            if "success" in response:
+                response = {"status": "success", "message": "Item successfully Updated"}
+            else:
+                response = {"status": "failure", "message": "There is an error"}
+            client_socket.sendall(json.dumps(response).encode())      
 
     def update_menu_item(self, client_socket, request):
         role_name = request.get("RoleName")
