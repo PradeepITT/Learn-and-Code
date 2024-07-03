@@ -52,23 +52,3 @@ class Recommendation:
 
         return recommendations
 
-
-if __name__ == "__main__":
-    # Replace with your actual database connection details
-    db_handler = DatabaseHandler(host="localhost", user="root", password="12345678", database="cafeteria")
-    
-    # Connect to the database
-    db_handler.connect()
-    
-    # Create an instance of Recommendation
-    recommendation = Recommendation(db_handler)
-    
-    # Example: Get recommendations
-    recommendations = recommendation.recommend_food_items()
-    print("Recommendations:")
-    print(f"Breakfast: {recommendations['Breakfast']}")
-    print(f"Lunch: {recommendations['Lunch']}")
-    print(f"Dinner: {recommendations['Dinner']}")
-    
-    # Close the database connection
-    db_handler.close()

@@ -22,7 +22,7 @@ class Admin(User):
             elif(choice == 5):
                 print("\nEXITING...Bye")
                 self.server_communicator.close_connection()
-                break
+                exit()
             else:
                 print("Invalid choice. Please enter a valid option.")
 

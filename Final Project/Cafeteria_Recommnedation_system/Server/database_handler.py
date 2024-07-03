@@ -10,12 +10,16 @@ class DatabaseHandler:
         self.conn = None
 
     def connect(self):
-        self.conn = mysql.connector.connect(
-            host=self.host,
-            user=self.user,
-            password=self.password,
-            database=self.database
-        )
+        try:
+            self.conn = mysql.connector.connect(
+                host=self.host,
+                user=self.user,
+                password=self.password,
+                database=self.database
+            )
+            print("Connection established")
+        except mysql.connector.Error as err:
+            print(f"Error: Could not establish connection: {err}")
 
     def check_login(self, username, password):
         cursor = self.conn.cursor()
@@ -179,8 +183,9 @@ class DatabaseHandler:
         
             
     def close(self):
-        if self.conn:
+        if self.conn and self.conn.is_connected():
             self.conn.close()
+            print("Connection closed")
     
     def calculate_average_ratings(self):
         self.connect()
@@ -194,7 +199,54 @@ class DatabaseHandler:
         cursor.execute(query)
         avg_ratings = cursor.fetchall()
         cursor.close()
-        self.close()
         return avg_ratings
 
+    def add_recommended_menu_item(self, menu_item_id, votes):
+        cursor = self.conn.cursor()
+        query = "INSERT INTO recommendedmenuitem (MenuItemID, Votes) VALUES (%s, %s)"
+        try:
+            cursor.execute(query, (menu_item_id, votes))
+            self.conn.commit()
+            return "success"
+        except Exception as e:
+            print(f"Error in add_recommended_menu_item: {e}")
+            self.conn.rollback()
+            return "error"
+        finally:
+            cursor.close()
+
+    def truncate_recommended_menu_item_table(self):
+        try:
+            if self.conn is None or not self.conn.is_connected():
+                raise Exception("MySQL Connection not available")
+
+            cursor = self.conn.cursor()
+            cursor.execute("TRUNCATE TABLE recommendedmenuitem")
+            self.conn.commit()
+            return "success"
+        except mysql.connector.Error as err:
+            print(f"Error: {err}")
+            return "failure"
+        except Exception as e:
+            print(f"Error: {e}")
+            return "failure"
+
+        
+    def get_voting_items(self):
+        query = """
+        SELECT ri.MenuItemID, mi.Name as MenuItemName, m.MealType, ri.Votes
+        FROM recommendedmenuitem ri
+        JOIN menuitem mi ON ri.MenuItemID = mi.ID
+        JOIN mealtype m ON mi.MealTypeID = m.ID
+        """
+        cursor = self.conn.cursor()
+        cursor.execute(query)
+        return cursor.fetchall()
+
+    def add_vote(self, menu_item_id):
+        query = "UPDATE recommendedmenuitem SET Votes = Votes + 1 WHERE MenuItemID = %s"
+        cursor = self.conn.cursor()
+        cursor.execute(query, (menu_item_id,))
+        self.conn.commit()
+        return "success"
 

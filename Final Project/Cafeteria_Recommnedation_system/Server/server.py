@@ -45,7 +45,7 @@ class Server:
                 self.add_menu_item(client_socket, request)
             elif endpoint == "/update-menu-item":
                 self.update_menu_item(client_socket, request)
-            elif endpoint == "/roll-out-menu":
+            elif endpoint == "/roll-out":
                 self.roll_out_menu(client_socket, request)
             elif endpoint == "/view-recomendation":
                 self.view_recomendation(client_socket, request)
@@ -54,7 +54,11 @@ class Server:
             elif endpoint == "/give-feedback":
                 self.give_feedback(client_socket, request)    
             elif endpoint == "/update-availablity":
-                self.update_availabilty(client_socket, request)     
+                self.update_availabilty(client_socket, request) 
+            elif endpoint == "/voting":
+                self.vote_for_menu(client_socket, request)
+            elif endpoint == "/voting-items":
+                self.view_voting_items(client_socket)    
             else:
                 response = {"status": "failure", "message": "Invalid endpoint"}
                 client_socket.sendall(json.dumps(response).encode())
@@ -70,7 +74,29 @@ class Server:
             client_socket.close()
 
     def roll_out_menu(self, client_socket, request):
-        pass
+        data = request.get("data")
+       
+        truncate_result = self.db_handler.truncate_recommended_menu_item_table()
+        if truncate_result == "failure":
+            response = {"status": "failure", "message": "Failed to truncate recommendedmenuitem table"}
+            client_socket.sendall(json.dumps(response).encode())
+            return
+
+        results = []
+        try:
+            for meal, menu_items in data.items():
+                for item in menu_items:
+                    menu_item_id = int(item)
+                    result = self.db_handler.add_recommended_menu_item(menu_item_id, 0)  # Initial votes set to 0
+                    results.append(result)
+            if all(result == "success" for result in results):
+                response = {"status": "success", "message": "Menu items are rolled out successfully"}
+            else:
+                response = {"status": "failure", "message": "An error occurred while adding menu items"}
+        except Exception as e:
+            print(f"Error in roll_out_menu: {e}")
+            response = {"status": "failure", "message": "An error occurred while adding menu items"}
+        client_socket.sendall(json.dumps(response).encode())
     
     def view_recomendation(self, client_socket, request):
         role_name = request.get("RoleName")
@@ -153,6 +179,46 @@ class Server:
         else:
             response = {"status": "failure", "message": "Access denied"}
         client_socket.sendall(json.dumps(response).encode())
+
+    def view_voting_items(self, client_socket):
+        try:
+            voting_items = self.db_handler.get_voting_items()
+            categorized_items = {"breakfast": [], "lunch": [], "dinner": []}
+
+            for item in voting_items:
+                meal_type = item[2]
+                categorized_items[meal_type].append({
+                    "MenuItemID": item[0],
+                    "MenuItemName": item[1],
+                    "Votes": item[3]
+                })
+
+            response = {"status": "success", "data": categorized_items}
+            client_socket.sendall(json.dumps(response).encode())
+        except Exception as e:
+            print(f"Error in view_voting_items: {e}")
+            response = {"status": "failure", "message": "An error occurred while fetching voting items"}
+            client_socket.sendall(json.dumps(response).encode())
+
+    def vote_for_menu(self, client_socket, request):
+        data = request.get("data")
+        if not data:
+            raise ValueError("No data provided")
+        try:
+            for meal_type, menu_item_id in data.items():
+                menu_item_id = int(menu_item_id)
+                result = self.db_handler.add_vote(menu_item_id)
+                if result != "success":
+                    response = {"status": "failure", "message": f"Failed to cast vote for {meal_type}"}
+                    client_socket.sendall(json.dumps(response).encode())
+                    return
+
+            response = {"status": "success", "message": "Votes successfully cast"}
+        except Exception as e:
+            print(f"Error in vote_for_menu: {e}")
+            response = {"status": "failure", "message": "An error occurred while casting votes"}
+        client_socket.sendall(json.dumps(response).encode())
+
 
 if __name__ == "__main__":
     server = Server('localhost', 12345, 'localhost', 'root', 'root', 'foodrecommendation')

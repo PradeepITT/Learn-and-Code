@@ -17,8 +17,7 @@ class Employee(User):
                 print("View Notification")
             # Implement logic for viewing notifications
             elif choice == 3:
-                print("Food Recommendation for Tomorrow")
-            # Implement logic for providing food recommendations for tomorrow
+                self.food_menu.vote_for_menu()
             elif choice == 4:
                 self.food_menu.give_feedback()
             elif choice == 5:
