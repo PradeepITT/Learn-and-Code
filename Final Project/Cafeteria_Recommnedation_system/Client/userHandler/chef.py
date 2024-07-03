@@ -9,15 +9,14 @@ class Chef(User):
     def user_menu(self):
         print(f"\nWelcome {self.name}({self.role})!")
         while True:
-            print("\n1. View Menu Item\n2. Roll Out Tomorrow's Menu\n3. Finalized Menu\n4. Update Availability of Menu Item\n5. View Feedback\n6. Exit")
+            print("\n1. View Menu Item\n2. Roll Out Tomorrow's Menu\n3. View Yesterday's Vote \n4. Update Availability of Menu Item\n5. View Feedback\n6. Exit")
             choice = int(input("Enter a choice : "))
             if(choice == 1):
                 self.food_menu.view_menu()
             elif(choice == 2):
                 self.food_menu.roll_out_menu()
             elif choice == 3:
-                print("Displaying finalized menu...")
-            # Implement logic for displaying finalized menu
+                self.food_menu.view_yesterday_voting()
             elif choice == 4:
                 self.food_menu.update_availabilty()
             elif choice == 5:

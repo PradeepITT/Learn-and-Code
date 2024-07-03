@@ -4,6 +4,7 @@ import json
 from database_handler import DatabaseHandler
 from login_handler import LoginHandler
 from recomendation import Recommendation
+import datetime
 
 class Server:
     def __init__(self, host, port, db_host, db_user, db_password, db_name):
@@ -58,7 +59,11 @@ class Server:
             elif endpoint == "/voting":
                 self.vote_for_menu(client_socket, request)
             elif endpoint == "/voting-items":
-                self.view_voting_items(client_socket)    
+                self.view_voting_items(client_socket)   
+            elif endpoint == "/send-notification":
+                self.send_notification(client_socket, request)
+            elif endpoint == "/get-notification":
+                self.get_notification(client_socket)                 
             else:
                 response = {"status": "failure", "message": "Invalid endpoint"}
                 client_socket.sendall(json.dumps(response).encode())
@@ -72,6 +77,30 @@ class Server:
             client_socket.sendall(json.dumps(response).encode())
         finally:
             client_socket.close()
+
+    def send_notification(self, client_socket, request):
+        message = request.get("message")
+        try:
+            self.db_handler.send_notification(message)
+            response = {"status": "success", "message": "Notification sent successfully"}
+        except Exception as e:
+            print(f"Error sending notification: {e}")
+            response = {"status": "failure", "message": "Failed to send notification"}
+        client_socket.sendall(json.dumps(response).encode())
+
+    def get_notification(self, client_socket):
+        try:
+            notifications = self.db_handler.get_notification()
+            # Convert date objects to string
+            notifications = [
+                (notification_id, message, date.isoformat() if isinstance(date, datetime.date) else date)
+                for notification_id, message, date in notifications
+            ]
+            response = {"status": "success", "notifications": notifications}
+        except Exception as e:
+            print(f"Error fetching notifications: {e}")
+            response = {"status": "failure", "message": "Failed to fetch notifications"}
+        client_socket.sendall(json.dumps(response).encode())            
 
     def roll_out_menu(self, client_socket, request):
         data = request.get("data")
@@ -183,7 +212,7 @@ class Server:
     def view_voting_items(self, client_socket):
         try:
             voting_items = self.db_handler.get_voting_items()
-            categorized_items = {"breakfast": [], "lunch": [], "dinner": []}
+            categorized_items = {"Breakfast": [], "Lunch": [], "Dinner": []}
 
             for item in voting_items:
                 meal_type = item[2]
