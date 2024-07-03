@@ -5,8 +5,13 @@ class Recommendation:
         self.db_handler = db_handler
 
     def calculate_sentiment_score(self, comment):
-        positive_words = ["delicious", "fantastic", "excellent", "superb", "enjoyed", "good", "Fantastic!"]
-        negative_words = ["bad", "poor", "disappointing", "awful", "not good"]
+        positive_words = ["delicious", "fantastic", "excellent", "superb", "enjoyed", "good", "fantastic", 
+                  "amazing", "awesome", "great", "wonderful", "tasty", "yummy", "perfect", 
+                  "splendid", "fabulous", "pleasant", "terrific", "nice"]
+
+        negative_words = ["bad", "poor", "disappointing", "awful", "not good", "horrible", 
+                  "terrible", "disgusting", "displeasing", "gross", "bland", "mediocre", 
+                  "unpleasant", "unsatisfactory", "underwhelming", "meh", "subpar"]
 
         positive_score = sum(comment.lower().count(word) for word in positive_words)
         negative_score = sum(comment.lower().count(word) for word in negative_words)
