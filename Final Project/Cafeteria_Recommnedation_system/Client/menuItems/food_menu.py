@@ -1,9 +1,10 @@
 import json 
 
 class FoodMenu:
-    def __init__(self, server_communicator, role):
+    def __init__(self, server_communicator, role, user_id):
         self.server_communicator = server_communicator
         self.role = role
+        self.user_id = user_id
 
     def view_menu(self):
         endpoint = "/food_menu"
@@ -27,14 +28,13 @@ class FoodMenu:
             print(f"{item['FoodName']:<35} {item['UserName']:<25} {item['Rating']:<10} {item['Comment']:<70} {item['Date']:<20}")
 
     def give_feedback(self):
-        user_id = input("Enter your User ID: ")
         menu_item_id = input("Enter the Menu Item ID: ")
         rating = input("Enter your Rating (e.g., 4.5): ")
         comment = input("Enter your Comment: ")
 
         endpoint = "/give-feedback"
         data = {
-            "UserID": int(user_id),
+            "UserID": self.user_id,
             "MenuItemID": int(menu_item_id),
             "Rating": float(rating),
             "Comment": comment,

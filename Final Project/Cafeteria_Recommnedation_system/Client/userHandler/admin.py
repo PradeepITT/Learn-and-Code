@@ -4,7 +4,7 @@ from menuItems.food_menu import FoodMenu
 class Admin(User):
     def __init__(self, id, name, role, server_communicator):
         super().__init__(id, name, role, server_communicator)
-        self.food_menu = FoodMenu(server_communicator, self.role)
+        self.food_menu = FoodMenu(server_communicator, self.role, self.id)
 
     def user_menu(self):
         print(f"\nWelcome {self.name}({self.role})!")

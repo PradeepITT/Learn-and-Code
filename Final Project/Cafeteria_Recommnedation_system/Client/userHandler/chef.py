@@ -4,7 +4,7 @@ from menuItems.food_menu import FoodMenu
 class Chef(User):
     def __init__(self, id, name, role, server_communicator):
         super().__init__(id, name, role, server_communicator)
-        self.food_menu = FoodMenu(server_communicator, self.role)
+        self.food_menu = FoodMenu(server_communicator, self.role, self.id)
 
     def user_menu(self):
         print(f"\nWelcome {self.name}({self.role})!")
@@ -22,7 +22,6 @@ class Chef(User):
                 print("Generating monthly report...")
             # Implement logic for generating monthly report
             elif choice == 5:
-                print("hiii")
                 self.food_menu.update_availabilty()
             elif choice == 6:
                 self.food_menu.view_feedback()
