@@ -59,11 +59,13 @@ class Server:
             elif endpoint == "/voting":
                 self.vote_for_menu(client_socket, request)
             elif endpoint == "/voting-items":
-                self.view_voting_items(client_socket)   
+                self.view_voting_items(client_socket, request)   
             elif endpoint == "/send-notification":
                 self.send_notification(client_socket, request)
             elif endpoint == "/get-notification":
-                self.get_notification(client_socket)                 
+                self.get_notification(client_socket)              
+            elif endpoint == "/update-user-profile":
+                self.update_user_profile(client_socket, request)         
             else:
                 response = {"status": "failure", "message": "Invalid endpoint"}
                 client_socket.sendall(json.dumps(response).encode())
@@ -180,6 +182,22 @@ class Server:
                 response = {"status": "failure", "message": "There is an error"}
             client_socket.sendall(json.dumps(response).encode())
 
+    def update_user_profile(self, client_socket, request):
+        role_name = request.get("RoleName")
+        user_id = request.get("UserId")
+        new_dietpreference = request.get("DietPreference")
+        new_spicelevel = request.get("SpiceLevel")
+        new_cuisinepreference = request.get("CuisinePreference")
+        new_sweettooth = request.get("SweetTooth")
+        print(request)
+        if role_name == "Employee":
+            response = self.db_handler.update_userprofile(user_id, new_dietpreference, new_spicelevel, new_cuisinepreference, new_sweettooth)
+            if "success" in response:
+                response = {"status": "success", "message": "Profile successfully Updated"}
+            else:
+                response = {"status": "failure", "message": "There is an error"}
+            client_socket.sendall(json.dumps(response).encode())        
+
     def add_menu_item(self, client_socket, request):
         role_name = request.get("RoleName")
         if role_name == "Admin":
@@ -210,9 +228,11 @@ class Server:
             response = {"status": "failure", "message": "Access denied"}
         client_socket.sendall(json.dumps(response).encode())
 
-    def view_voting_items(self, client_socket):
+    def view_voting_items(self, client_socket, request):
+        user_id = request.get("UserID")
         try:
-            voting_items = self.db_handler.get_voting_items()
+            diet_preference = self.db_handler.get_diet_preference(user_id)
+            voting_items = self.db_handler.get_voting_items(diet_preference)
             categorized_items = {"Breakfast": [], "Lunch": [], "Dinner": []}
 
             for item in voting_items:

@@ -231,15 +231,17 @@ class DatabaseHandler:
             return "failure"
 
         
-    def get_voting_items(self):
+    def get_voting_items(self, diet_preference):
         query = """
-        SELECT ri.MenuItemID, mi.Name as MenuItemName, m.MealType, ri.Votes
+        SELECT ri.MenuItemID, mi.Name as MenuItemName, m.MealType, ri.Votes, 
+            (mi.DietPreference = %s) AS is_preferred
         FROM recommendedmenuitem ri
         JOIN menuitem mi ON ri.MenuItemID = mi.ID
         JOIN mealtype m ON mi.MealTypeID = m.ID
+        ORDER BY is_preferred DESC, m.MealType, mi.Name
         """
         cursor = self.conn.cursor()
-        cursor.execute(query)
+        cursor.execute(query, (diet_preference,))
         return cursor.fetchall()
 
     def add_vote(self, menu_item_id):
@@ -281,11 +283,36 @@ class DatabaseHandler:
 
     def get_notification(self):
         cursor = self.conn.cursor()
-        print("get_notification")
         today_date = datetime.today().strftime('%Y-%m-%d')
         query = "SELECT ID, Message, Date FROM notification WHERE Date = %s"
         cursor.execute(query, (today_date,))
         result = cursor.fetchall()
         cursor.close()
         return result
+    
+    def update_userprofile(self, user_id, new_dietpreference, new_spicelevel, new_cuisinepreference, new_sweettooth):
+        cursor = self.conn.cursor()
+        print((new_dietpreference, new_spicelevel, new_cuisinepreference, new_sweettooth, user_id))
+        update_query = """
+        UPDATE user
+        SET DietPreference = %s, SpiceLevel = %s, CuisinePreference = %s, SweetTooth = %s
+        WHERE ID = %s
+        """
+        try:
+            cursor.execute(update_query, (new_dietpreference, new_spicelevel, new_cuisinepreference, new_sweettooth, user_id))
+            self.conn.commit()
+            return "success"
+        except Exception as e:
+            print(f"An error occurred: {e}")
+            self.conn.rollback()
+            return "error"
+        finally:
+            cursor.close()
+
+    def get_diet_preference(self, user_id):
+        query = "SELECT DietPreference FROM user WHERE ID = %s"
+        cursor = self.conn.cursor()
+        cursor.execute(query, (user_id,))
+        result = cursor.fetchone()
+        return result[0] if result else None       
 
