@@ -198,6 +198,7 @@ class DatabaseHandler:
         cursor.execute(query)
         avg_ratings = cursor.fetchall()
         cursor.close()
+        print(avg_ratings)
         return avg_ratings
 
     def add_recommended_menu_item(self, menu_item_id, votes):
@@ -315,4 +316,26 @@ class DatabaseHandler:
         cursor.execute(query, (user_id,))
         result = cursor.fetchone()
         return result[0] if result else None       
+    
+    def get_low_rating_items(self):
+        cursor = self.conn.cursor()
+        query = """
+        SELECT m.ID AS MenuItemID, m.Name AS MenuItem, AVG(f.Rating) AS AvgRating, f.Comment, m.MealTypeID
+        FROM feedback f
+        JOIN menuitem m ON f.MenuItemID = m.ID
+        GROUP BY f.MenuItemID, m.Name, f.Comment, m.MealTypeID
+        HAVING Avg(f.Rating) <= 2;
+        """
+        cursor.execute(query)
+        result = cursor.fetchall()
+        cursor.close()
+        low_rating_items = []
+        for item in result:
+            low_rating_items.append({
+                "MenuItemID": item[0],
+                "FoodName": item[1],
+                "AvgRating": item[2]
+            })
+        return low_rating_items
+
 

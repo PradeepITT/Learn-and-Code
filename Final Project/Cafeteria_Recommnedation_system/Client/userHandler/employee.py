@@ -17,7 +17,7 @@ class Employee(User):
                     print(notification[1])
             else:
                 print()
-            print("\n1. View Menu Item\n2. Update Profile \n3.Food Recommendation for Tomorrow\n4. Give Feedback\n5. View Feedback\n6. Exit")
+            print("\n1. View Menu Item\n2. Update Profile \n3. Food Recommendation for Tomorrow\n4. Give Feedback\n5. View Feedback\n6. Exit")
             choice = int(input("Enter a choice : "))
             if(choice == 1):
                 self.food_menu.view_menu()

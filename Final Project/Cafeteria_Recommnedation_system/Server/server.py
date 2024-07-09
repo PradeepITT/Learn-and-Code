@@ -65,7 +65,9 @@ class Server:
             elif endpoint == "/get-notification":
                 self.get_notification(client_socket)              
             elif endpoint == "/update-user-profile":
-                self.update_user_profile(client_socket, request)         
+                self.update_user_profile(client_socket, request)    
+            elif endpoint == "/view-low-rating-items":
+                self.view_low_rating_items(client_socket, request)     
             else:
                 response = {"status": "failure", "message": "Invalid endpoint"}
                 client_socket.sendall(json.dumps(response).encode())
@@ -79,6 +81,17 @@ class Server:
             client_socket.sendall(json.dumps(response).encode())
         finally:
             client_socket.close()
+
+    def view_low_rating_items(self, client_socket, request):
+        role_name = request.get("role_name")
+        if role_name in ["Admin", "Chef"]:
+            low_rating_items = self.db_handler.get_low_rating_items()
+            response = {"status": "success", "low_rating_items": low_rating_items}
+        else:
+            response = {"status": "failure", "message": "Access denied"}
+        client_socket.sendall(json.dumps(response).encode())
+        
+
 
     def send_notification(self, client_socket, request):
         message = request.get("message")

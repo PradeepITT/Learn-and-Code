@@ -6,6 +6,17 @@ class FoodMenu:
         self.role = role
         self.user_id = user_id
 
+    def view_low_rating_items(self):
+        endpoint = "/view-low-rating-items"
+        data = {"role_name": self.role}
+        response = self.server_communicator.send_request(endpoint, data)
+        if response["status"] == "success":
+            print(f"{'FoodName':<35} {'AvgRating':<10}")
+            for item in response['low_rating_items']:
+                print(f"{item['FoodName']:<35} {item['AvgRating']:<10.2f}")
+        else:
+            print("Failed to fetch low rating items: ", response["message"])
+
     def view_menu(self):
         endpoint = "/food_menu"
         data = {"role_name": self.role}
