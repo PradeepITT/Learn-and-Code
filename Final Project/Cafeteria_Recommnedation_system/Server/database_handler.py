@@ -338,4 +338,19 @@ class DatabaseHandler:
             })
         return low_rating_items
 
-
+    def add_moms_recipe(self, user_id, moms_recipe):
+        cursor = self.conn.cursor()
+        query = """
+        INSERT INTO momsrecipe (UserID, MomsRecipe)
+        VALUES (%s, %s)
+        """
+        try:
+            cursor.execute(query, (user_id, moms_recipe))
+            self.conn.commit()
+            return "success"
+        except Exception as e:
+            print(f"An error occurred while adding mom's recipe: {e}")
+            self.conn.rollback()
+            return "error"
+        finally:
+            cursor.close()
