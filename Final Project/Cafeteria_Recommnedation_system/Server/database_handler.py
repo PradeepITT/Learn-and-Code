@@ -354,3 +354,22 @@ class DatabaseHandler:
             return "error"
         finally:
             cursor.close()
+
+    def get_moms_recipe(self):
+            cursor = self.conn.cursor()
+            query = """
+            SELECT mr.ID, u.Name AS Username, mr.MomsRecipe
+            FROM momsrecipe mr
+            JOIN user u ON mr.UserID = u.ID;
+            """
+            cursor.execute(query)
+            result = cursor.fetchall()
+            cursor.close()
+            momsrecipe_details = []
+            for item in result:
+                momsrecipe_details.append({
+                    "UserID": item[0],
+                    "UserName": item[1],
+                    "Recipe": item[2],
+                })
+            return momsrecipe_details            

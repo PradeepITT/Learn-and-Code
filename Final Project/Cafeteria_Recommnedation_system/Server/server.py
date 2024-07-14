@@ -177,6 +177,13 @@ class Server:
         response = {"status": "success", "feedback": feedback}
         client_socket.sendall(json.dumps(response).encode())
 
+    def view_moms_recipe(self, client_socket, request):
+        role_name = request.get("role_name")
+        recipe = self.db_handler.get_moms_recipe()
+        print(recipe)
+        response = {"status": "success", "feedback": recipe}
+        client_socket.sendall(json.dumps(response).encode())        
+
     def give_feedback(self, client_socket, request):
         role_name = request.get("RoleName")
         if role_name == "Employee":

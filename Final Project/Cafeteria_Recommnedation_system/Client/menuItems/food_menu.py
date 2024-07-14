@@ -37,6 +37,16 @@ class FoodMenu:
         for item in response['feedback']:
             print(f"{item['FoodName']:<35} {item['UserName']:<25} {item['Rating']:<10} {item['Comment']:<70} {item['Date']:<20}")
 
+    def view_momsrecipe(self):
+        endpoint = "/view-moms-recipe"
+        data = {"role_name": self.role}
+        response = self.server_communicator.send_request(endpoint, data)
+        print(f"{'UserID':<10} {'UserName':<25} {'Recipe':<70}")
+        
+        for item in response['feedback']:
+            print(f"{item['UserID']:<10} {item['UserName']:<25} {item['Recipe']:<70}")
+
+
     def give_feedback(self):
         menu_item_id = input("Enter the Menu Item ID: ")
         rating = input("Enter your Rating (e.g., 4.5): ")
