@@ -240,6 +240,7 @@ class Server:
 
     def add_menu_item(self, client_socket, request):
         role_name = request.get("RoleName")
+        print(request)
         if role_name == "Admin":
             response = self.db_handler.add_menuItem(request)
             if "success" in response:
