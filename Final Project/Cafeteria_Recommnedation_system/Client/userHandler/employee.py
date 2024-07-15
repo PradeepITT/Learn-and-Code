@@ -3,13 +3,14 @@ from Modules.menu_viewer import MenuViewer
 from Modules.feedback_handler import FeedbackHandler
 from Modules.menu_manager import MenuManager
 from Modules.roll_out_manager import RolloutManager
-from Modules.user_manager import UserManager
+from Modules.user_preference_manager import UserPreferenceManager
 from Modules.voting_handler import VotingHandler
 from utility.notification_handler import NotificationHandler
+
 class Employee(User):
     def __init__(self, id, name, role, server_communicator):
         super().__init__(id, name, role, server_communicator)
-        self.user_manager = UserManager(server_communicator, self.role, self.id)
+        self.user_manager = UserPreferenceManager(server_communicator, self.role, self.id)
         self.menu_manager = MenuManager(server_communicator, self.role, self.id)
         self.notification_handler = NotificationHandler(server_communicator)
         self.menu_viewer = MenuViewer(server_communicator, self.role)

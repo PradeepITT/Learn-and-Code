@@ -342,7 +342,7 @@ class DatabaseHandler:
             low_rating_items.append({
                 "MenuItemID": item[0],
                 "FoodName": item[1],
-                "AvgRating": item[2]
+                "AvgRating": float(item[2])
             })
         return low_rating_items
 

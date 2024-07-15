@@ -3,14 +3,14 @@ from Modules.menu_viewer import MenuViewer
 from Modules.feedback_handler import FeedbackHandler
 from Modules.menu_manager import MenuManager
 from Modules.roll_out_manager import RolloutManager
-from Modules.user_manager import UserManager
+from Modules.user_preference_manager import UserPreferenceManager
 from Modules.voting_handler import VotingHandler
 from utility.notification_handler import NotificationHandler
 
 class Chef(User):
     def __init__(self, id, name, role, server_communicator):
         super().__init__(id, name, role, server_communicator)
-        self.user_manager = UserManager(server_communicator, self.role, self.id)
+        self.user_manager = UserPreferenceManager(server_communicator, self.role, self.id)
         self.menu_manager = MenuManager(server_communicator, self.role, self.id)
         self.notification_handler = NotificationHandler(server_communicator)
         self.menu_viewer = MenuViewer(server_communicator, self.role)
@@ -31,7 +31,7 @@ class Chef(User):
             elif choice == 3:
                 self.voting_handler.view_yesterday_voting()
             elif choice == 4:
-                self.menu_manager.update_availabilty()
+                self.menu_manager.update_item_availability()
             elif choice == 5:
                 self.feedback_handler.view_feedback()
             elif choice == 6:

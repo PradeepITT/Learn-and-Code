@@ -54,9 +54,9 @@ class MenuManager:
         else:
             print(response["message"])
         
-    def update_availabilty(self):
+    def update_item_availability(self):
         item_id = int(input("Please enter food ID to Update : "))
-        endpoint = "/update-availablity"
+        endpoint = "/update-availability"
         availability = input("Enter availability (Yes or No)")
         if availability.upper() == "YES":
             availability = 1
@@ -77,17 +77,16 @@ class MenuManager:
         print("Enter the mom's recipe (press Enter once to finish):")
         recipe = []
 
-        # Continuous input until single Enter is pressed
         while True:
             line = input()
-            if line == "":  # Check if the line is empty
+            if line == "": 
                 break
             recipe.append(line)
         
-        recipe_text = "\n".join(recipe)  # Join lines into a single string
+        recipe_text = "\n".join(recipe) 
 
         print("\nRecipe entered:")
-        print(recipe_text)  # Print the recipe back to the user
+        print(recipe_text)
 
         data = {
             "UserID": self.user_id,

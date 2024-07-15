@@ -1,4 +1,3 @@
-import json
 class RolloutManager:
     def __init__(self, server_communicator, role, user_id):
         self.server_communicator = server_communicator

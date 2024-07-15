@@ -1,8 +1,21 @@
 from database_handler import DatabaseHandler
+import json
 
 class Recommendation:
     def __init__(self, db_handler):
         self.db_handler = db_handler
+    
+    def endpointHandler(self, client_socket, request):
+        endpoint = request.get("endpoint")
+        if endpoint == "/view-recomendation":
+            self.view_recomendation(client_socket, request)
+
+    def view_recomendation(self, client_socket, request):
+        role_name = request.get("RoleName")
+        if role_name == "Chef":
+            response = self.recommend_food_items()
+            response = {"status": "success", "recomendations": response}
+            client_socket.sendall(json.dumps(response).encode())  
 
     def calculate_sentiment_score(self, comment):
         if not comment:

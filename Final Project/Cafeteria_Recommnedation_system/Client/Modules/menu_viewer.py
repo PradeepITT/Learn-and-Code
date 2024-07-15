@@ -1,4 +1,3 @@
-import json
 class MenuViewer:
     def __init__(self, server_communicator, role):
         self.server_communicator = server_communicator
@@ -26,8 +25,7 @@ class MenuViewer:
 
     def view_momsrecipe(self):
         endpoint = "/view-moms-recipe"
-        data = {"role_name": self.role}
-        response = self.server_communicator.send_request(endpoint, data)
+        response = self.server_communicator.send_request(endpoint)
         print(f"{'ID':<10} {'UserName':<25} {'Recipe':<70}")
         for item in response['feedback']:
             print(f"{item['UserID']:<10} {item['UserName']:<25} {item['Recipe']:<70}")
