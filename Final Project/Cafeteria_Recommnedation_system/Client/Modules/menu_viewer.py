@@ -28,6 +28,6 @@ class MenuViewer:
         endpoint = "/view-moms-recipe"
         data = {"role_name": self.role}
         response = self.server_communicator.send_request(endpoint, data)
-        print(f"{'UserID':<10} {'UserName':<25} {'Recipe':<70}")
+        print(f"{'ID':<10} {'UserName':<25} {'Recipe':<70}")
         for item in response['feedback']:
             print(f"{item['UserID']:<10} {item['UserName']:<25} {item['Recipe']:<70}")

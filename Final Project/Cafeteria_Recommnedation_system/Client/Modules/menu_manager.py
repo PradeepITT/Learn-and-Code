@@ -1,10 +1,11 @@
 import json
 class MenuManager:
-    def __init__(self, server_communicator, role):
+    def __init__(self, server_communicator, role, user_id):
         self.server_communicator = server_communicator
         self.role = role
+        self.user_id = user_id
 
-    def add_food_item(self):
+    def add_menu_item(self):
         food_name = input("Enter the food item name : ")
         price = input("Enter Price : ")
         mealtype = input("Meal Type : ")
@@ -52,3 +53,55 @@ class MenuManager:
             print(response["message"])
         else:
             print(response["message"])
+        
+    def update_availabilty(self):
+        item_id = int(input("Please enter food ID to Update : "))
+        endpoint = "/update-availablity"
+        availability = input("Enter availability (Yes or No)")
+        if availability.upper() == "YES":
+            availability = 1
+        elif availability.upper() == "NO":
+            availability = 0
+        else: 
+            print("Invalid Input")
+            return 
+        data = {"RoleName": "Chef", "MenuItemID": item_id, "AvailabilityStatus": availability}
+
+        response = self.server_communicator.send_request(endpoint, data)
+        if response["status"] == "success":
+            print(response["message"])
+        else:
+            print(response["message"])
+
+    def add_moms_recipe(self):
+        print("Enter the mom's recipe (press Enter once to finish):")
+        recipe = []
+
+        # Continuous input until single Enter is pressed
+        while True:
+            line = input()
+            if line == "":  # Check if the line is empty
+                break
+            recipe.append(line)
+        
+        recipe_text = "\n".join(recipe)  # Join lines into a single string
+
+        print("\nRecipe entered:")
+        print(recipe_text)  # Print the recipe back to the user
+
+        data = {
+            "UserID": self.user_id,
+            "Recipe": recipe_text,
+            "RoleName": self.role
+        }
+
+        endpoint = "/add-moms-recipe"
+        response = self.server_communicator.send_request(endpoint, data)
+
+        if response["status"] == "success":
+            print(response["message"])
+        else:
+            print(response["message"])
+
+    
+

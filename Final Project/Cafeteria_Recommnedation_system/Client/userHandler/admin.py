@@ -6,7 +6,7 @@ class Admin(User):
     def __init__(self, id, name, role, server_communicator):
         super().__init__(id, name, role, server_communicator)
         self.menu_viewer = MenuViewer(server_communicator, self.role)
-        self.menu_manager = MenuManager(server_communicator, self.role)
+        self.menu_manager = MenuManager(server_communicator, self.role, self.id)
 
     def user_menu(self):
         print(f"\nWelcome {self.name}({self.role})!")
@@ -16,7 +16,7 @@ class Admin(User):
             if choice == 1:
                 self.menu_viewer.view_menu()
             elif choice == 2:
-                self.menu_manager.add_food_item()
+                self.menu_manager.add_menu_item()
             elif choice == 3:
                 self.menu_manager.delete_menu_item()
             elif choice == 4:
