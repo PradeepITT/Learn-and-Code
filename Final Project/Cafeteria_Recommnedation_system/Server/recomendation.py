@@ -31,7 +31,7 @@ class Recommendation:
         positive_score = sum(comment.lower().count(word) for word in positive_words)
         negative_score = sum(comment.lower().count(word) for word in negative_words)
         return positive_score - negative_score
-
+    
     def recommend_food_items(self):
         avg_ratings = self.db_handler.calculate_average_ratings()
         recommendations = {"Breakfast": [], "Lunch": [], "Dinner": []}
@@ -41,7 +41,7 @@ class Recommendation:
             menu_item_id = item["MenuItemID"]
             menu_item_name = item["MenuItem"]
             avg_rating = item["AvgRating"]
-            comment = item.get("Comment", "")  # Fetching comment, if available
+            comment = item.get("Comment", "")  
             sentiment_score = self.calculate_sentiment_score(comment)
 
             combined_score = avg_rating + sentiment_score
@@ -60,6 +60,14 @@ class Recommendation:
             if menu_item_id not in seen_items[category]:
                 recommendations[category].append(recommendation)
                 seen_items[category].add(menu_item_id)
+            else:
+                item_index = None
+                for index, item in enumerate(recommendations[category]):
+                    if item.get("MenuItemID") == recommendation["MenuItemID"]:
+                        item_index = index
+                recommendations[category][item_index]["Score"] += combined_score
+            
+
 
         # Sort recommendations by score in descending order and keep only top 3 recommendations
         for category in recommendations:
